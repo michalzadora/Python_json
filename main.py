@@ -42,7 +42,6 @@ def main():
         contents[i] = dict(contents[i])
         # VALIDATION OF FIGURES
         if not validation.shape_validate(contents[i],screen):
-            print("STH WRONG")
             return
         if not contents[i].__contains__('color'):
             contents[i]['color'] = screen.get('fg_color')
