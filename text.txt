@@ -1,0 +1,24 @@
+# Zadanie domowe:
+#
+# Napisac program, ktory odczytuje plik w formacie JSON z opisem grafiki, wyswietla tez grafike na ekranie i zapisuje w pliku PNG.
+#
+# Plik moze zawierac:
+#
+#    punkty
+#    wielokaty (podana lista punktow)
+#    prostokaty (wspolrzedne srodka, wysokosc, szerokosc) - rowwnolegle do osi ukladu wspolrzednych
+#    kwadraty (srodek i dlugosc boku)
+#    kola (srodek i promien)
+#
+# Kazda figura moze miec okreslony kolor w postaci slownej (z zadnej palety np. red),
+# trojka liczb dziesietnych (np. 255, 0, 0) lub nortacji HTML (#ff0000)
+# Przykladowy plik zawieracjacy wszystkie dopuszczalne elementy:
+#   http://home.agh.edu.pl/~zkaleta/python/sample.json
+#
+# Program ma przyjmowac nazwe pliku wejsciowego z linii komend.
+# Jezeli zostanie podana flaga -o (lub --output) to po niej ma byc nazwa pliku do ktorego
+# nalezy zapisac. Jezeli flaga nie zostanie podana to nalezy tylko wyswietlic na ekranie.
+#
+# Termin oddania:
+#
+# polnoc przed laboratorium 6.
