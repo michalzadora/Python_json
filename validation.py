@@ -2,26 +2,35 @@ import shapes as sh
 import re
 
 
-def shape_validate(shape):
+def shape_validate(shape, screen):
     shape = dict(shape)
     if 'type' in shape.keys():
         type = shape.get('type')
-        if type == 'point' and all(fild in shape for fild in ('x', 'y')):
+        if type == 'point' and all(fild in shape for fild in ('x', 'y')) and \
+                0 <= shape.get('x') <= screen.get('width') and \
+                0 <= shape.get('y') <= screen.get('height'):
             return True
         elif type == 'polygon' and 'points' in shape:
             return True
-        elif type == 'rectangle' and all(fild in shape for fild in ('x', 'y', 'width', 'height')):
+        elif type == 'rectangle' and all(fild in shape for fild in ('x', 'y', 'width', 'height')) and \
+                0 <= shape.get('x') <= screen.get('width') and \
+                0 <= shape.get('y') <= screen.get('height') and \
+                0 <= shape.get('width') and 0 <= shape.get('height'):
             return True
-        elif type == 'circle' and all(fild in shape for fild in ('x', 'y', 'radius')):
+        elif type == 'circle' and all(fild in shape for fild in ('x', 'y', 'radius')) and \
+                0 <= shape.get('x') <= screen.get('width') and \
+                0 <= shape.get('y') <= screen.get('height') and \
+                0 <= shape.get('radius'):
             return True
-        elif type == 'square' and all(fild in shape for fild in ('x', 'y', 'size')):
+        elif type == 'square' and all(fild in shape for fild in ('x', 'y', 'size')) and \
+                0 <= shape.get('x') <= screen.get('width') and \
+                0 <= shape.get('y') <= screen.get('height') and \
+                0 <= shape.get('size'):
             return True
         else:
-            print("Wrong filds in: " + str(shape))
-            return False
+            raise Exception("Wrong filds or wrong value in one of them in: " + str(shape))
     else:
-        print("No type in: " + str(shape))
-        return False
+        raise Exception("No type in: " + str(shape))
 
 
 def screen_palette_validate(screen, palette):
@@ -29,23 +38,24 @@ def screen_palette_validate(screen, palette):
             int(screen.get('width')) > 0 and int(screen.get('height')) > 0 and \
             colour_validate(screen.get('bg_color'), palette) and \
             colour_validate(screen.get('fg_color'), palette) and \
-            all (colour_validate(colour, palette) for colour in palette.values()):
+            all(colour_validate(colour, palette) for colour in palette.values()):
         return True
     else:
-        print("No validation for screen or palette")
-        return False
+        raise Exception("No validation for screen or palette")
 
 
 def colour_validate(colour, palette):
     if colour.startswith("#") and len(colour) == 7:
-        return all(re.match('[0-9a-f]', number) for number in colour[1:])
+        if all(re.match('[0-9a-f]', number) for number in colour[1:]):
+            return True
+        raise Exception("Problem with colour in HTML notification.")
     elif colour.startswith("(") and colour.endswith(")"):
         colour = tuple(map(int, re.findall('[0-9]{1,3}', colour)))
         if len(colour) == 3 and all(0 <= x <= 255 for x in colour):
             return True
         else:
-            return False
+            raise Exception("Problem with colour in RGB notification.")
     elif re.search('^[a-z]+$', colour) and colour in palette:
         return True
     else:
-        return False
+        raise Exception("Wrong colour in json, check it!")

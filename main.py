@@ -1,5 +1,6 @@
 import argparse
 import json
+import PIL
 import re
 import shapes as sh
 import graphic
@@ -19,12 +20,15 @@ def divine(text, file):
 
 
 def main():
+
     parser = argparse.ArgumentParser()
     parser.add_argument("input", type=str, help="path to json file")
     # If we have option -o or --output we have to check if next arg is path to output
     parser.add_argument("-o", "--output", type=str, help="option to save graphic to file")
     args = parser.parse_args()
-
+    if not re.search('\.png$',args.output):
+        print("Output file should has png as file extension e.g. file_name.png")
+        return
     # Read from json file and divine it for major parts (Figures, Screen, Palette)
     file = reader(args.input)
     screen = dict(divine('Screen', file))
@@ -37,7 +41,9 @@ def main():
     while (i < len(contents)):
         contents[i] = dict(contents[i])
         # VALIDATION OF FIGURES
-        validation.shape_validate(contents[i])
+        if not validation.shape_validate(contents[i],screen):
+            print("STH WRONG")
+            return
         if not contents[i].__contains__('color'):
             contents[i]['color'] = screen.get('fg_color')
         else:
@@ -69,12 +75,11 @@ def main():
             shapes_to_draw.append(sh.Polygon(c.get('points'),
                                              c.get('color')))
 
-    # if screen.keys().__contains__('bg_color' and 'fg_color'):
-    # if (screen['bg_color'] and screen['fg_color']) in palette.keys():
-
-    a = graphic.Graphic(shapes_to_draw, screen, palette)
-    a.make_graphic()
-
+    drawer = graphic.Graphic(shapes_to_draw, screen, palette)
+    drawer.make_graphic()
+    if args.output:
+        drawer.save_as_png(args.output)
+    pass
 
 if __name__ == "__main__":
     main()
